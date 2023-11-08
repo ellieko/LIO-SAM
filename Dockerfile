@@ -1,5 +1,11 @@
 FROM ros:humble
 
+# nvidia-container-runtime
+ENV NVIDIA_VISIBLE_DEVICES \
+    ${NVIDIA_VISIBLE_DEVICES:-all}
+ENV NVIDIA_DRIVER_CAPABILITIES \
+    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
+
 RUN apt-get update \
     && apt-get install -y curl \
     && curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add - \
@@ -29,6 +35,10 @@ RUN mkdir -p ~/ros2_ws/src \
     && cd .. \
     && source /opt/ros/humble/setup.bash \
     && colcon build
+
+RUN apt-get update \
+    && apt install ros-humble-rviz2
+
 
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc \
     && echo "source /root/ros2_ws/install/setup.bash" >> /root/.bashrc
